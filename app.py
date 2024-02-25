@@ -7,7 +7,7 @@ app = Flask(__name__)
 model = joblib.load("drug_test/drug_prediction_model.pkl")
 
 
-@app.route("/predict", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def predict():
     if request.method == "GET":
         return render_template("predict_form.html")
