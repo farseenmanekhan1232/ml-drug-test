@@ -84,4 +84,4 @@ Finally, start your Flask application with:
 flask run
 ```
 
-Your application will be accessible at `http://127.0.0.1:5000`.
+Your application will be accessible at `http://127.0.0.1:5000/predict`.
