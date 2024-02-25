@@ -8,7 +8,7 @@ First, clone your Flask application repository to your local machine using the f
 
 ```bash
 git clone https://github.com/farseenmanekhan1232/ml-drug-test.git
-cd ml-drugdtest
+cd ml-drug-test
 ```
 
 ### 2. Create a Virtual Environment
