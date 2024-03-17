@@ -1,23 +1,23 @@
-from flask import Flask, request, jsonify, render_template
-import pandas as pd
-import joblib
+from flask import Blueprint, request, render_template, redirect, url_for
+from werkzeug.utils import secure_filename
+from drug_test.util import process_mzml_file
+import os
 
-app = Flask(__name__)
-
-model = joblib.load("drug_test/drug_prediction_model.pkl")
-
-
-@app.route("/", methods=["GET", "POST"])
-def predict():
-    if request.method == "GET":
-        return render_template("predict_form.html")
-    elif request.method == "POST":
-        mass = request.form["mass"]
-        mass_proton = request.form["mass_proton"]
-        input_df = pd.DataFrame([[mass, mass_proton]], columns=["Mass", "M+proton"])
-        prediction = model.predict(input_df)
-        return jsonify({"prediction": prediction[0]})
+drug_test_blueprint = Blueprint("drug_test", __name__, template_folder="templates")
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@drug_test_blueprint.route("/", methods=["GET", "POST"])
+def upload_file():
+    if request.method == "POST":
+        if "file" not in request.files:
+            return redirect(request.url)
+        file = request.files["file"]
+        if file.filename == "":
+            return redirect(request.url)
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join("uploads", filename)
+            file.save(file_path)
+            prediction = process_mzml_file(file_path)
+            return render_template("result.html", prediction=prediction)
+    return render_template("index.html")
