@@ -23,7 +23,6 @@ Ensure you have Docker installed on your machine. Docker will handle the install
    cd ml-drug-test
    ```
 
-````
 
 2. **Build the Docker image**
 
@@ -59,4 +58,3 @@ To use the application, follow these steps:
 - [Docker](https://www.docker.com/) - Containerization
 - [Scikit-Learn](https://scikit-learn.org/stable/) - Machine Learning library for Python
 - [Joblib](https://joblib.readthedocs.io/en/latest/) - Efficiently loading the pre-trained model
-````
