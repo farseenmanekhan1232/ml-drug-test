@@ -75,6 +75,6 @@ def main(filepath, model_output_path="drug_test/drug_prediction_model.pkl"):
     logging.info("\n" + classification_report(y_test, predictions))
 
 
-filepath = os.path.join(os.getcwd(), "drug_test", "data", "dataset.xlsx")
-model_output_path = os.path.join(os.getcwd(), "drug_test", "drug_prediction_model.pkl")
+filepath = os.path.join(os.getcwd(), "data")
+model_output_path = os.path.join(os.getcwd(), "data", "drug_prediction_model.pkl")
 main(filepath, model_output_path)
