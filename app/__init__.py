@@ -7,10 +7,9 @@ def create_app():
     app.config.from_object("config.Config")
 
     with app.app_context():
-        # Include our Routes
+
         from . import routes
 
-        # Register Blueprints
         app.register_blueprint(routes.bp)
 
         return app

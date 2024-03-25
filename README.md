@@ -19,8 +19,8 @@ Ensure you have Docker installed on your machine. Docker will handle the install
    Clone this repository to your local machine to get started.
 
    ```bash
-   git clone https://your-repository-url.git
-   cd your-repository-directory
+   git clone https://github.com/farseenmanekhan1232/ml-drug-test.git
+   cd ml-drug-test
    ```
 
 ````

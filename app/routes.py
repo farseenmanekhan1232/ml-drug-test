@@ -7,7 +7,7 @@ bp = Blueprint("main", __name__)
 @bp.route("/", methods=["GET", "POST"])
 def upload_file():
     if request.method == "POST":
-        # Check if the post request has the file part
+
         if "file" not in request.files:
             flash("No file part")
             return redirect(request.url)

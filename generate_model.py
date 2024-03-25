@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import LabelEncoder
 
-# Set up basic logging
+
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -75,7 +75,6 @@ def main(filepath, model_output_path="drug_test/drug_prediction_model.pkl"):
     logging.info("\n" + classification_report(y_test, predictions))
 
 
-# Adjusting the filepath for cross-platform compatibility and specifying model output path
 filepath = os.path.join(os.getcwd(), "drug_test", "data", "dataset.xlsx")
 model_output_path = os.path.join(os.getcwd(), "drug_test", "drug_prediction_model.pkl")
 main(filepath, model_output_path)
