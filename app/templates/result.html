@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Prediction Results</title>
+  </head>
+  <body>
+    <h1>Prediction Results</h1>
+    <ul>
+      {% for mass, prediction in predictions %}
+      <li>Molecular Mass: {{ mass }} Da, Prediction: {{ prediction }}</li>
+      {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Try another file</a>
+  </body>
+</html>
