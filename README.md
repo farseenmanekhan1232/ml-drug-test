@@ -1,87 +1,62 @@
+# Compound Prediction Flask Application
+
+This Flask application allows users to upload `.mzML` files and receive predictions for compounds based on molecular mass extracted from the file. The application utilizes a pre-trained model for making predictions.
+
 ## Getting Started
 
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. The project is containerized using Docker, simplifying the setup and deployment process.
 
+### Prerequisites
 
-### 1. Clone the Repository
+Ensure you have Docker installed on your machine. Docker will handle the installation of Python and all the necessary dependencies for you.
 
-First, clone your Flask application repository to your local machine using the following command:
+- [Get Docker](https://docs.docker.com/get-docker/)
 
-```bash
-git clone https://github.com/farseenmanekhan1232/ml-drug-test.git
-cd ml-drug-test
-```
+### Installing
 
-### 2. Create a Virtual Environment
+1. **Clone the repository**
 
-It is recommended to create a virtual environment for your project to manage dependencies:
+   Clone this repository to your local machine to get started.
 
-- **Windows:**
+   ```bash
+   git clone https://your-repository-url.git
+   cd your-repository-directory
+   ```
 
-```bash
-python -m venv venv
-```
+````
 
-- **macOS/Linux:**
+2. **Build the Docker image**
 
-```bash
-python3 -m venv venv
-```
+   Navigate to the root of the project directory where the `Dockerfile` is located and build the Docker image using the following command:
 
-### 3. Activate the Virtual Environment
+   ```bash
+   docker build -t flask_compound_prediction .
+   ```
 
-Activate the virtual environment with the following command:
+   This command builds a Docker image named `flask_compound_prediction` based on the instructions in your `Dockerfile`.
 
-- **Windows:**
+3. **Run the Docker container**
 
-```bash
-.\venv\Scripts\activate
-```
+   After the image is built, you can run the application inside a Docker container using:
 
-- **macOS/Linux:**
+   ```bash
+   docker run -p 5000:5000 flask_compound_prediction
+   ```
 
-```bash
-source venv/bin/activate
-```
+   This command runs the `flask_compound_prediction` image as a container and maps port 5000 of the container to port 5000 on your host, allowing you to access the Flask application by visiting `http://localhost:5000` in your web browser.
 
-### 4. Install Dependencies
+### Using the Application
 
-Install the required dependencies by running:
+To use the application, follow these steps:
 
-```bash
-pip install -r requirements.txt
-```
+1. Open your web browser and navigate to `http://localhost:5000`.
+2. Use the web interface to upload a `.mzML` file from your local system.
+3. Submit the file, and the application will display the predicted compound based on the molecular mass extracted from the `.mzML` file.
 
-### 5. Set Environment Variables
+## Built With
 
-Before running your Flask application, you need to set the `FLASK_APP` environment variable:
-
-- **Windows:**
-
-```bash
-set FLASK_APP=app.py
-```
-
-- **macOS/Linux:**
-
-```bash
-export FLASK_APP=app.py
-```
-
-Replace `app.py` with the entry point of your Flask application.
-
-
-### 6. Generate Model
-
-```bash
-python ./drug_test/generate_model.py
-```
-
-### 6. Run the Flask Application
-
-Finally, start your Flask application with:
-
-```bash
-flask run
-```
-
-Your application will be accessible at `http://127.0.0.1:5000`.
+- [Flask](http://flask.pocoo.org/) - The web framework used
+- [Docker](https://www.docker.com/) - Containerization
+- [Scikit-Learn](https://scikit-learn.org/stable/) - Machine Learning library for Python
+- [Joblib](https://joblib.readthedocs.io/en/latest/) - Efficiently loading the pre-trained model
+````
