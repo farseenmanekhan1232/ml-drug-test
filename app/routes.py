@@ -1,30 +1,18 @@
-from flask import render_template, request, redirect, url_for
-from app import app
-from .models import load_model
-from .utils import handle_mzml_upload, mz_to_molecular_mass
+from flask import Blueprint, render_template, request
+from .util import process_mzml_file, predict_substance
+
+main = Blueprint("main", __name__)
 
 
-@app.route("/")
-@app.route("/index")
+@main.route("/", methods=["GET", "POST"])
 def index():
+    if request.method == "POST":
+        # Process file upload and get predictions
+        file = request.files.get("file")
+        if file:
+            mz_values, charges = process_mzml_file(file)
+            predictions = [
+                predict_substance(mz, charge) for mz, charge in zip(mz_values, charges)
+            ]
+            return render_template("result.html", predictions=predictions)
     return render_template("index.html")
-
-
-@app.route("/predict", methods=["POST"])
-def predict():
-    if "file" not in request.files:
-        return redirect(request.url)
-    file = request.files["file"]
-    if file.filename == "":
-        return redirect(request.url)
-    if file:
-        mz_values, charges = handle_mzml_upload(file)
-        model = load_model()
-        predictions = []
-        for mz, charge in zip(mz_values, charges):
-            mass = mz_to_molecular_mass(mz, charge)
-            prediction = model.predict([mass])[
-                0
-            ]  # Assuming model expects a list of masses
-            predictions.append((mass, prediction))
-        return render_template("result.html", predictions=predictions)
