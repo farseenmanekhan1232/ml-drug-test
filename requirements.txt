@@ -3,4 +3,5 @@ pandas
 openpyxl
 scikit-learn
 flask
-pyopenms
+reportlab
+fpdf

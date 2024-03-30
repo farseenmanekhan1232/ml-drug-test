@@ -1,28 +1,29 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, send_file, render_template
+from fpdf import FPDF
 import pandas as pd
-import pickle
+import joblib
+import numpy as np
 import base64
 import struct
-import numpy as np
-import joblib
+import io
 
 app = Flask(__name__)
 
 
 def decode_base64_and_unpack(binary_string):
     decoded_bytes = base64.b64decode(binary_string)
-    mz_values = struct.unpack("<" + "d" * (len(decoded_bytes) // 8), decoded_bytes)
-    return np.array(mz_values)
+    return struct.unpack("<" + "d" * (len(decoded_bytes) // 8), decoded_bytes)
 
 
-def load_model():
+def load_model_and_formulas():
     model_path = "./data/molecular_prediction_model.pkl"
+    formulas_path = "./data/compound_formulas.pkl"
     model = joblib.load(model_path)
-    return model
+    formulas = joblib.load(formulas_path)
+    return model, formulas
 
 
-# Load your model
-model = load_model()
+model, formulas = load_model_and_formulas()
 
 
 @app.route("/", methods=["GET"])
@@ -32,44 +33,50 @@ def upload_file():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    if "file" not in request.files:
-        return jsonify({"message": "No file part in the request"}), 400
     file = request.files["file"]
-    if file.filename == "":
-        return jsonify({"message": "No file selected for uploading"}), 400
+    contents = file.read().decode("utf-8")
+    start = contents.find("<binary>") + 8
+    end = contents.find("</binary>", start)
+    encoded_mz = contents[start:end].strip()
 
-    try:
-        model = load_model()
-        contents = file.read().decode("utf-8")
-        start = contents.find("<binary>") + 8
-        end = contents.find("</binary>", start)
-        encoded_mz = contents[start:end].strip()
+    mz_values = decode_base64_and_unpack(encoded_mz)
+    data_for_prediction = pd.DataFrame(
+        {
+            "molecular_mass": mz_values,
+            "M+proton": mz_values + 1.00784,
+        }
+    )
 
-        mz_values = decode_base64_and_unpack(encoded_mz)
-        data_for_prediction = pd.DataFrame(
-            {
-                "molecular_mass": mz_values,
-                "M+proton": mz_values + 1.00784,
-            }
-        )
+    prediction = model.predict(data_for_prediction)
+    prediction_formulas = [formulas[name] for name in prediction]
 
-        print(model)
-        prediction = model.predict(data_for_prediction)
+    # Generate PDF
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    pdf.cell(200, 10, txt="Prediction Results", ln=True, align="C")
 
-        response = {"prediction": prediction.tolist()}
-    except Exception as e:
-        return (
-            jsonify(
-                {
-                    "error": str(e),
-                    "message": "Failed to process file or make prediction",
-                }
-            ),
-            500,
-        )
+    # Add table header
+    pdf.cell(90, 10, "Drug Name", border=1)
+    pdf.cell(40, 10, "Formula", border=1)
+    pdf.cell(40, 10, "M/Z Value", border=1, ln=True)
 
-    return jsonify(response)
+    for name, formula, mz in zip(prediction, prediction_formulas, mz_values):
+        pdf.cell(90, 10, name, border=1)
+        pdf.cell(40, 10, formula, border=1)
+        pdf.cell(40, 10, str(mz), border=1, ln=True)
+
+    pdf_filename = "temp_prediction_results.pdf"
+    pdf.output(pdf_filename)
+    pdf_buffer.seek(0)
+
+    return redirect(url_for("results", filename=pdf_filename))
+
+
+@app.route("/download/<filename>")
+def download(filename):
+    return send_file(filename, as_attachment=True)
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
