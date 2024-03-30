@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, render_template
+from flask import Flask, request, send_file, render_template, redirect, url_for
 from fpdf import FPDF
 import pandas as pd
 import joblib
@@ -43,7 +43,7 @@ def predict():
     data_for_prediction = pd.DataFrame(
         {
             "molecular_mass": mz_values,
-            "M+proton": mz_values + 1.00784,
+            "M+proton": [mz + 1.00784 for mz in mz_values],
         }
     )
 
@@ -68,7 +68,6 @@ def predict():
 
     pdf_filename = "temp_prediction_results.pdf"
     pdf.output(pdf_filename)
-    pdf_buffer.seek(0)
 
     return redirect(url_for("results", filename=pdf_filename))
 
