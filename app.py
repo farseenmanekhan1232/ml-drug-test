@@ -4,21 +4,25 @@ import pickle
 import base64
 import struct
 import numpy as np
+import joblib
 
 app = Flask(__name__)
 
 
-model_path = "./data/molecular_prediction_model.pkl"
-with open(model_path, "rb") as file:
-    model = pickle.load(file)
-    print(file)
-
-
 def decode_base64_and_unpack(binary_string):
-    """Decode base64-encoded string and unpack to floats."""
     decoded_bytes = base64.b64decode(binary_string)
     mz_values = struct.unpack("<" + "d" * (len(decoded_bytes) // 8), decoded_bytes)
     return np.array(mz_values)
+
+
+def load_model():
+    model_path = "./data/molecular_prediction_model.pkl"
+    model = joblib.load(model_path)
+    return model
+
+
+# Load your model
+model = load_model()
 
 
 @app.route("/", methods=["GET"])
@@ -35,6 +39,7 @@ def predict():
         return jsonify({"message": "No file selected for uploading"}), 400
 
     try:
+        model = load_model()
         contents = file.read().decode("utf-8")
         start = contents.find("<binary>") + 8
         end = contents.find("</binary>", start)
