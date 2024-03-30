@@ -7,7 +7,15 @@ import base64
 import struct
 import io
 
+from flask_session import Session
+
 app = Flask(__name__)
+
+app = Flask(__name__)
+app.secret_key = "drugdetection"
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 
 def decode_base64_and_unpack(binary_string):
@@ -69,13 +77,19 @@ def predict():
     pdf_filename = "temp_prediction_results.pdf"
     pdf.output(pdf_filename)
 
+    session["results"] = [
+        {"Drug Name": name, "Formula": formula, "M/Z Value": mz}
+        for name, formula, mz in zip(prediction, prediction_formulas, mz_values)
+    ]
+
     return redirect(url_for("results", filename=pdf_filename))
 
 
 @app.route("/results")
 def results():
+    results = session.get("results", [])
     filename = request.args.get("filename")
-    return render_template("results.html", filename=filename)
+    return render_template("results.html", filename=filename, results=results)
 
 
 @app.route("/download/<filename>")

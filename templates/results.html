@@ -6,13 +6,23 @@
   </head>
   <body>
     <h1>Prediction Results</h1>
-    <embed
-      src="{{ url_for('static', filename=filename) }}"
-      width="600"
-      height="500"
-      type="application/pdf"
-    />
+    <table border="1">
+      <tr>
+        <th>Drug Name</th>
+        <th>Formula</th>
+        <th>M/Z Value</th>
+      </tr>
+      {% for result in results %}
+      <tr>
+        <td>{{ result['Drug Name'] }}</td>
+        <td>{{ result['Formula'] }}</td>
+        <td>{{ result['M/Z Value'] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
     <br />
-    <a href="{{ url_for('download', filename=filename) }}">Download Report</a>
+    <a href="{{ url_for('download')  , filename=filename}}"
+      >Download Report as PDF</a
+    >
   </body>
 </html>

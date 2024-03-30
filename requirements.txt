@@ -5,3 +5,4 @@ scikit-learn
 flask
 reportlab
 fpdf
+flask_session
