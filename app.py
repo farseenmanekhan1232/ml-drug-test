@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, render_template, redirect, url_for
+from flask import Flask, request, send_file, render_template, redirect, url_for, session
 from fpdf import FPDF
 import pandas as pd
 import joblib
@@ -10,6 +10,7 @@ import io
 from flask_session import Session
 
 app = Flask(__name__)
+
 
 app = Flask(__name__)
 app.secret_key = "drugdetection"
