@@ -72,6 +72,12 @@ def predict():
     return redirect(url_for("results", filename=pdf_filename))
 
 
+@app.route("/results")
+def results():
+    filename = request.args.get("filename")
+    return render_template("results.html", filename=filename)
+
+
 @app.route("/download/<filename>")
 def download(filename):
     return send_file(filename, as_attachment=True)
